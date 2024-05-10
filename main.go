@@ -7,6 +7,7 @@ import (
 
 func main() {
 	models.NewGormDB()
+	models.NewRedis()
 	r := router.App()
 	r.Run(":8098")
 }

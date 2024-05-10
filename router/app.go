@@ -5,14 +5,28 @@ import (
 	"gogingorm/Filter"
 	"gogingorm/controller"
 )
-import "github.com/thinkerou/favicon"
 
 func App() *gin.Engine {
 	ginServer := gin.Default()
-	ginServer.Use(favicon.New("./favicon.ico"))
-	ginServer.Use(Filter.RequestTimeMiddleware(), Filter.AuthMiddleware())
-	ginServer.GET("/user", Filter.UserMiddle(), controller.GetUser)
-	ginServer.POST("/insertUser", Filter.UserMiddle(), controller.InsertUser)
-	ginServer.POST("/UserTransactional", Filter.UserMiddle(), controller.UserTransactional)
+	// 用户信息相关路由
+	userRoutes := ginServer.Group("/user")
+	{
+		userRoutes.GET("", Filter.UserMiddle(), controller.GetUser)
+	}
+
+	// 用户创建和更新操作
+	userManagementRoutes := ginServer.Group("/user-management")
+	{
+		userManagementRoutes.POST("/create", Filter.UserMiddle(), controller.InsertUser)
+		userManagementRoutes.POST("/transactional", Filter.UserMiddle(), controller.UserTransactional)
+	}
+
+	// 用户名称存储和检索
+	userNameRoutes := ginServer.Group("/user-name")
+	{
+		userNameRoutes.POST("/save-by-redis", Filter.UserMiddle(), controller.InsertUserNameByRedis)
+		userNameRoutes.GET("/retrieve-by-redis", Filter.UserMiddle(), controller.GetUserNameByRedis)
+	}
+
 	return ginServer
 }

@@ -32,7 +32,7 @@ func InsertUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	// 例如，从数据库中查询用户信息
+	// 例如，保存用户信息
 	models.DB.Debug().Table("user").Create(&user)
 
 	// 返回用户信息
